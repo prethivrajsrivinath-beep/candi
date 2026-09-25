@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Canteen | College Eatery</title>
+    <!-- Font Awesome Icons for modern look -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8f8f4 0%, #f5f7f4 30%, #f9f7f3 100%);
+            color: #1e293b;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        #appContent {
+            background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(244,247,244,0.4));
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(43, 110, 78, 0.92));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+
+        .login-box {
+            width: min(420px, 100%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            color: white;
+        }
+
+        .login-box h2 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            margin-bottom: 1rem;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .login-box input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .login-box button {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            background: #f59e0b;
+            color: #1e293b;
+            padding: 0.9rem 1rem;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .login-note {
+            text-align: center;
+            margin-top: 1rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .customer-message {
+            position: sticky;
+            top: 0;
+            z-index: 150;
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            color: #166534;
+            border-bottom: 1px solid #bbf7d0;
+            padding: 0.9rem 1rem;
+            text-align: center;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(22, 101, 52, 0.08);
+        }
+
+        .customer-message .close-message {
+            float: right;
+            cursor: pointer;
+            font-weight: 900;
+            margin-left: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .settings-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            border: 1px solid #dfe7ee;
+            background: #f8fafc;
+            color: #1f2937;
+            padding: 0.7rem 1rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s ease;
+            position: relative;
+        }
+
+        .settings-btn:hover {
+            background: #eef6f1;
+            border-color: #cfe0d4;
+            color: #2b6e4e;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            width: 270px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 22px;
+            box-shadow: 0 24px 46px rgba(15, 23, 42, 0.18);
+            padding: 0.8rem;
+            z-index: 200;
+            backdrop-filter: blur(12px);
+        }
+
+        .settings-menu.hidden {
+            display: none;
+        }
+
+        .settings-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.15rem 0.35rem 0.7rem;
+            font-weight: 800;
+            color: #1f2937;
+            letter-spacing: 0.02em;
+        }
+
+        .settings-panel-header i {
+            color: #2b6e4e;
+            font-size: 1rem;
+        }
+
+        .settings-option {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            color: #1e293b;
+            padding: 0.9rem 0.9rem;
+            border-radius: 14px;
+            font-size: 0.96rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+            transition: 0.2s ease;
+        }
+
+        .settings-option:hover {
+            background: #eafaf1;
+            color: #2b6e4e;
+            transform: translateX(2px);
+        }
+
+        .settings-option span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .settings-option.danger {
+            background: linear-gradient(180deg, #fff1f2, #fdf2f8);
+            color: #b91c1c;
+        }
+
+        .settings-option.danger:hover {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .settings-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 0.55rem 0 0.7rem;
+        }
+
+        .language-list {
+            margin-top: 0.3rem;
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .language-list.open {
+            display: block;
+        }
+
+        .language-item {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 0.75rem 0.8rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #1e293b;
+            cursor: pointer;
+        }
+
+        .language-item:hover,
+        .language-item.active {
+            background: #eafaf1;
+            color: #2b6e4e;
+            font-weight: 700;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2b6e4e;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #f59e0b;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #334155;
+            transition: 0.2s;
+            font-size: 1.05rem;
+        }
+
+        .nav-links a:hover {
+            color: #2b6e4e;
+        }
+
+        /* Cart icon in navbar */
+        .cart-icon-nav {
+            position: relative;
+            background: #e9f2ee;
+            padding: 0.5rem 0.9rem;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1e4620;
+        }
+
+        .cart-count {
+            background: #f59e0b;
+            color: white;
+            border-radius: 30px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(rgba(255,255,255,0.62), rgba(255,255,255,0.82)),
+                        url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+            color: #1f2937;
+            padding: 4rem 2rem;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+        }
+
+        .hero::after {
+            content: "🍛🍜☕";
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.12;
+            bottom: -20px;
+            right: 20px;
+            transform: rotate(-10deg);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: #173a2f;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+            color: #334155;
+        }
+
+        .btn-primary {
+            background: #f59e0b;
+            border: none;
+            padding: 1rem 2.8rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 15px 30px -10px rgba(245, 158, 11, 0.5);
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: #fbbf24;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 35px -8px #f59e0b;
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2.5rem 0 1.5rem;
+            text-align: center;
+            color: #1e3a2b;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 5px;
+            background: #f59e0b;
+            border-radius: 5px;
+            margin: 0.5rem auto 0;
+        }
+
+        /* ===== MENU CATEGORIES ===== */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category-btn.active {
+            background: #2b6e4e;
+            color: white;
+            border-color: #2b6e4e;
+        }
+
+        .category-btn:hover {
+            background: #e9f2ee;
+        }
+
+        /* ===== MENU GRID ===== */
+        .main-layout {
+            background: linear-gradient(180deg, rgba(233, 246, 238, 0.75), rgba(255, 246, 234, 0.9));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 30px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.04);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 3rem;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            transition: 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef2f6;
+        }
+
+        .food-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 35px -10px rgba(43, 110, 78, 0.15);
+        }
+
+        .food-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+
+        .food-info {
+            padding: 1.2rem 1.2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .food-category {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #f59e0b;
+            margin-bottom: 0.3rem;
+        }
+
+        .food-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.4rem;
+        }
+
+        .food-desc {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .food-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2b6e4e;
+            margin-bottom: 0.8rem;
+        }
+
+        .add-to-cart {
+            background: #2b6e4e;
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .add-to-cart:hover {
+            background: #1e4a2f;
+        }
+
+        /* ===== CART PANEL (SIDEBAR) ===== */
+        .cart-sidebar {
+            background: linear-gradient(180deg, #fffaf0 0%, #f3fbf5 100%);
+            border-radius: 28px;
+            padding: 1.8rem;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 100px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .cart-sidebar h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #1e3a2b;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 0.8rem;
+            border-bottom: 1px solid #eef2f6;
+            padding-bottom: 1rem;
+            align-items: center;
+        }
+
+        .cart-item-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .cart-item-price {
+            font-size: 0.9rem;
+            color: #2b6e4e;
+            font-weight: 600;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .qty-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        .qty-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.2rem 0.4rem;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 800;
+            font-size: 1.4rem;
+            padding-top: 1rem;
+            border-top: 2px dashed #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-checkout {
+            background: #f59e0b;
+            width: 100%;
+            border: none;
+            padding: 1rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-checkout:hover {
+            background: #fbbf24;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #94a3b8;
+            padding: 2rem 0;
+            font-style: italic;
+        }
+
+        .orders-icon-nav {
+            position: relative;
+            background: #e9f2ee;
+            padding: 0.5rem 0.9rem;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1e4620;
+        }
+
+        .orders-count {
+            background: #2b6e4e;
+            color: white;
+            border-radius: 30px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .orders-section {
+            margin: 3rem auto 2rem;
+            display: block;
+            background: linear-gradient(180deg, rgba(234, 248, 242, 0.9), rgba(242, 247, 255, 0.85));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 28px;
+            padding: 1.5rem 1rem 2rem;
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.04);
+        }
+
+        .orders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f6;
+            border-left: 6px solid #2b6e4e;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .order-id {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e3a2b;
+        }
+
+        .order-date {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .status-badge.preparing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.ready,
+        .status-badge.delivery {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-badge.paid {
+            background: #dcfce7;
+            color: #14532d;
+        }
+
+        .pay-order-btn {
+            border: none;
+            border-radius: 999px;
+            background: #1d4ed8;
+            color: white;
+            padding: 0.6rem 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .paid-tag {
+            background: #e0f2fe;
+            color: #075985;
+            border-radius: 999px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .order-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin: 1rem 0;
+        }
+
+        .order-item-row {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .order-item-row img {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .order-item-name {
+            flex: 1;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .order-item-qty {
+            color: #64748b;
+            min-width: 55px;
+            text-align: center;
+        }
+
+        .order-item-price {
+            font-weight: 700;
+            color: #2b6e4e;
+            min-width: 82px;
+            text-align: right;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #e2e8f0;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .delete-order-btn {
+            border: none;
+            border-radius: 999px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.55rem 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .delete-order-btn:hover {
+            background: #fecaca;
+        }
+
+        .order-total-label {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .order-total-amount {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #2b6e4e;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #94a3b8;
+            background: white;
+            border-radius: 24px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .no-orders i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* ===== ABOUT & CONTACT ===== */
+        .about-contact {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid #edf2f7;
+        }
+
+        .about-contact .card:nth-child(1) {
+            background: linear-gradient(180deg, #f1fbf5 0%, #ffffff 100%);
+        }
+
+        .about-contact .card:nth-child(2) {
+            background: linear-gradient(180deg, #fffaf1 0%, #ffffff 100%);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #1e3a2b;
+        }
+
+        .card p {
+            color: #475569;
+            margin-bottom: 0.8rem;
+        }
+
+        .contact-info i {
+            color: #f59e0b;
+            width: 28px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 2rem 0 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(233,242,236,0.7));
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .nav-links {
+                gap: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .about-contact {
+                grid-template-columns: 1fr;
+            }
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            .cart-sidebar {
+                padding: 1.2rem;
+            }
+        }
+
+        /* layout with cart sidebar */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .menu-toolbar {
+            margin: 1rem 0 1.5rem;
+        }
+
+        .menu-search {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 520px;
+            background: white;
+            border: 1px solid #dbe4ee;
+            border-radius: 999px;
+            padding: 0.4rem 0.5rem 0.4rem 1rem;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+        }
+
+        .menu-search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #0f172a;
+            font-size: 0.98rem;
+            padding: 0.75rem 0;
+        }
+
+        .menu-search button {
+            border: none;
+            background: linear-gradient(135deg, #2b6e4e, #1d4d3a);
+            color: white;
+            border-radius: 999px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1000px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .cart-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <form id="loginForm">
+                <h2>Login</h2>
+                <input type="text" id="loginUsername" placeholder="Username" autocomplete="username" />
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" />
+                <button id="loginBtn" type="submit">Login</button>
+                <p class="login-note">Demo: admin / 1234</p>
+            </form>
+        </div>
+    </div>
+
+    <div class="customer-message hidden" id="customerMessageBox">
+        <span id="customerMessageText"></span>
+        <span class="close-message" id="closeCustomerMessage">×</span>
+    </div>
+
+    <div id="appContent">
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="navbar-left" style="position: relative;">
+            <button class="settings-btn" id="settingsBtn" aria-label="Settings">
+                <i class="fas fa-gear"></i>
+                <span id="settingsText">Settings</span>
+                <div class="settings-menu hidden" id="settingsMenu">
+                    <div class="settings-panel-header">
+                        <span>Settings</span>
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+
+                    <button class="settings-option" id="notificationBtn" type="button">
+                        <span><i class="fas fa-bell"></i> Notifications</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="settings-option" id="themeBtn" type="button">
+                        <span><i class="fas fa-moon"></i> Theme</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="settings-option" id="languageToggleBtn" type="button">
+                        <span><i class="fas fa-language"></i> <span id="languageText">Language</span></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-list" id="languageList">
+                        <button class="language-item active" data-lang="en" type="button">English</button>
+                        <button class="language-item" data-lang="ta" type="button">தமிழ்</button>
+                        <button class="language-item" data-lang="kn" type="button">ಕನ್ನಡ</button>
+                        <button class="language-item" data-lang="ml" type="button">മലയാളം</button>
+                        <button class="language-item" data-lang="hi" type="button">हिन्दी</button>
+                    </div>
+                    <button class="settings-option" id="helpBtn" type="button">
+                        <span><i class="fas fa-circle-question"></i> Help</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="settings-divider"></div>
+                    <button class="settings-option" id="reportBtn" type="button">
+                        <span><i class="fas fa-flag"></i> <span id="reportText">Report</span></span>
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                    </button>
+                    <button class="settings-option danger" id="logoutBtn" type="button">
+                        <span><i class="fas fa-right-from-bracket"></i> <span id="logoutText">Logout</span></span>
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </button>
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span id="brandName">College Canteen</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li>
+    <a href="https://gokullakshmanan2006.github.io/brain-smart/" target="_blank" id="navWebsite">
+        Website
+    </a>
+</li>
+            <li><a href="#home" id="navHome">Home</a></li>
+            <li><a href="#menu" id="navMenu">Menu</a></li>
+            <li><a href="#myorders" id="navOrders">My Orders</a></li>
+            <li><a href="#about" id="navAbout">About</a></li>
+            <li><a href="#contact" id="navContact">Contact</a></li>
+            <li class="orders-icon-nav" id="ordersNavBtn" title="My Orders">
+                <i class="fas fa-receipt"></i>
+                <span class="orders-count" id="navOrdersCount">0</span>
+            </li>
+            <li class="cart-icon-nav" id="cartNavBtn">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="cart-count" id="navCartCount">0</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <header id="home" class="hero">
+        <h1>Digital Canteen System</h1>
+        <p>Skip the queue, order your favourite meals from campus – fresh, fast, and always delicious.</p>
+        <a href="#menu" class="btn-primary">Order Now <i class="fas fa-arrow-right"></i></a>
+    </header>
+
+    <!-- ===== MAIN LAYOUT: MENU + CART ===== -->
+    <div class="container main-layout" id="menu">
+        <!-- Left: Menu section -->
+        <div>
+            <h2 class="section-title">Our Menu</h2>
+
+            <div class="menu-toolbar">
+                <div class="menu-search">
+                    <input id="menuSearchInput" type="text" placeholder="Search food items..." aria-label="Search food items" />
+                    <button id="menuSearchBtn" type="button"><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+
+            <!-- Category filters -->
+            <div class="category-filters" id="categoryFilters">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="Breakfast">Breakfast</button>
+                <button class="category-btn" data-category="Lunch">Lunch</button>
+                <button class="category-btn" data-category="Snacks">Snacks</button>
+                <button class="category-btn" data-category="Beverages">Beverages</button>
+                <button class="category-btn" data-category="Fast Food">Fast Food</button>
+                <button class="category-btn" data-category="Chocolates">Chocolates</button>
+            </div>
+
+            <!-- Food grid will be injected via JS -->
+            <div class="menu-grid" id="menuGrid"></div>
+        </div>
+
+        <!-- Right: Cart sidebar -->
+        <aside class="cart-sidebar" id="cart">
+            <h2><i class="fas fa-shopping-cart"></i> Your Cart</h2>
+            <div id="cartItemsContainer">
+                <!-- Cart items injected here -->
+                <div class="empty-cart">Your cart is empty.</div>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalPrice">₹0</span>
+            </div>
+            <button class="btn-checkout" id="checkoutBtn"><i class="fas fa-check-circle"></i> Checkout</button>
+        </aside>
+    </div>
+
+    <!-- ===== MY ORDERS ===== -->
+    <div class="container orders-section" id="myorders">
+        <h2 class="section-title">My Orders</h2>
+        <div class="orders-container" id="ordersContainer">
+            <div class="no-orders">
+                <i class="fas fa-receipt"></i>
+                <p>You haven't placed any orders yet.</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Order something from the menu above!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ABOUT & CONTACT ===== -->
+    <div class="container about-contact" id="about">
+        <div class="card">
+            <h3><i class="fas fa-university" style="color: #f59e0b;"></i> About Us</h3>
+            <p>Digital Canteen is the smart way to pre-order meals at our college campus. We partner with local kitchens to bring you fresh, hygienic, and affordable food — all from your phone.</p>
+            <p>No more long lines. Order between classes, pick up when ready, and enjoy your break.</p>
+            <p style="margin-top: 1rem;"><strong>📍 Location:</strong> Student Center, Block C, Main Campus,thoppur,dharmapuri</p>
+        </div>
+        <div class="card" id="contact">
+            <h3><i class="fas fa-headset" style="color: #f59e0b;"></i> Contact</h3>
+            <p class="contact-info"><i class="fas fa-phone-alt"></i>918838341445</p>
+            <p class="contact-info"><i class="fas fa-envelope"></i>prethivrajsrivinath@gmail.com</p>
+            <p class="contact-info"><i class="fas fa-clock"></i> Mon–Sat: 8:00 AM – 8:00 PM</p>
+            <p style="margin-top: 1rem; font-size: 0.95rem;">For bulk orders or feedback, reach out anytime.</p>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>© 2026 Digital Canteen System · College Eatery · Made with <i class="fas fa-heart" style="color: #ef4444;"></i></p>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                settings: 'Settings',
+                language: 'Language',
+                report: 'Report',
+                logout: 'Logout',
+                brand: 'College Canteen',
+                website: 'Website',
+                home: 'Home',
+                menu: 'Menu',
+                orders: 'My Orders',
+                about: 'About',
+                contact: 'Contact',
+                heroTitle: 'Digital Canteen System',
+                heroText: 'Skip the queue, order your favourite meals from campus – fresh, fast, and always delicious.',
+                orderNow: 'Order Now',
+                ourMenu: 'Our Menu',
+                searchPlaceholder: 'Search food items...'
+            },
+            ta: {
+                settings: 'அமைப்புகள்',
+                language: 'மொழி',
+                report: 'அறிக்கை',
+                logout: 'வெளியேறு',
+                brand: 'கல்லூரி கவுண்டர்',
+                website: 'வலைத்தளம்',
+                home: 'முகப்பு',
+                menu: 'மெனு',
+                orders: 'எனது ஆர்டர்கள்',
+                about: 'பற்றி',
+                contact: 'தொடர்பு',
+                heroTitle: 'டிஜிட்டல் கேண்டீன் அமைப்பு',
+                heroText: 'வரிசையை தவிர்த்து, வளாகத்தில் இருந்து உங்கள் விருப்பமான உணவுகளை ஆர்டர் செய்யுங்கள்.',
+                orderNow: 'இப்போது ஆர்டர் செய்யுங்கள்',
+                ourMenu: 'எங்கள் மெனு',
+                searchPlaceholder: 'உணவுகளை தேடுங்கள்...'
+            },
+            kn: {
+                settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+                language: 'ಭಾಷೆ',
+                report: 'ವರದಿ',
+                logout: 'ಲಾಗ್‌ಅೌಟ್',
+                brand: 'ಕಾಲೇಜ್ ಕ್ಯಾಂಟಿನ್',
+                website: 'ವೆಬ್‌ಸೈಟ್',
+                home: 'ಮನೆ',
+                menu: 'ಮೆನು',
+                orders: 'ನನ್ನ ಆರ್ಡರ್‌ಗಳು',
+                about: 'ಮಾಹಿತಿ',
+                contact: 'ಸಂಪರ್ಕ',
+                heroTitle: 'ಡಿಜಿಟಲ್ ಕ್ಯಾಂಟೀನ್ ಸಿಸ್ಟಮ್',
+                heroText: 'ಕ್ಯూ ಅನ್ನು ತಪ್ಪಿಸಿ, ನಿಮ್ಮ ಪ್ರಿಯವಾದ ಊಟವನ್ನು ಕ್ಯಾಂಪಸಿನಿಂದ ಆರ್ಡರ್ ಮಾಡಿ.',
+                orderNow: 'ಇದೀಗ ಆರ್ಡರ್ ಮಾಡಿ',
+                ourMenu: 'ನಮ್ಮ ಮೆನು',
+                searchPlaceholder: 'ಆಹಾರವನ್ನು ಹುಡುಕಿ...'
+            },
+            ml: {
+                settings: 'സെറ്റിംഗ്സ്',
+                language: 'ഭാഷ',
+                report: 'റിപ്പോർട്ട്',
+                logout: 'ലോക്കൗട്ട്',
+                brand: 'കോളേജ് കാന്റീൻ',
+                website: 'വെബ്‌സൈറ്റ്',
+                home: 'ഹോം',
+                menu: 'മെനു',
+                orders: 'എന്റെ ഓർഡറുകൾ',
+                about: 'വിവരണം',
+                contact: 'ബന്ധപ്പെടുക',
+                heroTitle: 'ഡിജിറ്റൽ കേന്റീൻ സിസ്റ്റം',
+                heroText: 'ക്യൂ ഒഴിവാക്കി, കാമ്പസിൽ നിന്ന് നിങ്ങളുടെ ഇഷ്ടമുള്ള ഭക്ഷണം ഓർഡർ ചെയ്യുക.',
+                orderNow: 'ഇപ്പോൾ ഓർഡർ ചെയ്യൂ',
+                ourMenu: 'ഞങ്ങളുടെ മെനു',
+                searchPlaceholder: 'ഫുഡ് തിരയൂ...'
+            },
+            hi: {
+                settings: 'सेटिंग्स',
+                language: 'भाषा',
+                report: 'रिपोर्ट',
+                logout: 'लॉगआउट',
+                brand: 'कॉलेज कैंटीन',
+                website: 'वेबसाइट',
+                home: 'होम',
+                menu: 'मेनू',
+                orders: 'मेरे ऑर्डर',
+                about: 'के बारे में',
+                contact: 'संपर्क',
+                heroTitle: 'डिजिटल कैंटीन सिस्टम',
+                heroText: 'कतार छोड़ें और कैंपस से अपनी पसंदीदा भोजन ऑर्डर करें।',
+                orderNow: 'अभी ऑर्डर करें',
+                ourMenu: 'हमारा मेनू',
+                searchPlaceholder: 'खाना खोजें...'
+            }
+        };
+
+        function applyLanguage(lang = 'en') {
+            const active = translations[lang] || translations.en;
+            document.getElementById('settingsText').textContent = active.settings;
+            document.getElementById('languageText').textContent = active.language;
+            document.getElementById('reportText').textContent = active.report;
+            document.getElementById('logoutText').textContent = active.logout;
+            document.getElementById('brandName').textContent = active.brand;
+            document.getElementById('navWebsite').textContent = active.website;
+            document.getElementById('navHome').textContent = active.home;
+            document.getElementById('navMenu').textContent = active.menu;
+            document.getElementById('navOrders').textContent = active.orders;
+            document.getElementById('navAbout').textContent = active.about;
+            document.getElementById('navContact').textContent = active.contact;
+            const heroTitle = document.querySelector('.hero h1');
+            const heroText = document.querySelector('.hero p');
+            const orderNowBtn = document.querySelector('.btn-primary');
+            const menuTitle = document.querySelector('.section-title');
+            const searchInput = document.getElementById('menuSearchInput');
+            if (heroTitle) heroTitle.textContent = active.heroTitle;
+            if (heroText) heroText.textContent = active.heroText;
+            if (orderNowBtn) orderNowBtn.innerHTML = `${active.orderNow} <i class="fas fa-arrow-right"></i>`;
+            if (menuTitle) menuTitle.textContent = active.ourMenu;
+            if (searchInput) searchInput.placeholder = active.searchPlaceholder;
+
+            document.querySelectorAll('.language-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.lang === lang);
+            });
+        }
+
+        const savedLang = localStorage.getItem('canteenLanguage') || 'en';
+        applyLanguage(savedLang);
+
+        // ==================== FOOD DATA ====================
+        const foodItems = [
+            // Breakfast
+            { id: 1, name: "Masala Dosa", price: 60, category: "Breakfast", desc: "Crispy dosa with spiced potato filling, chutney & sambar.", img: "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400&h=300&fit=crop" },
+            { id: 2, name: "Aloo Paratha", price: 50, category: "Breakfast", desc: "Two stuffed parathas with curd and pickle.", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&h=300&fit=crop" },
+            { id: 3, name: "Poha", price: 35, category: "Breakfast", desc: "Flattened rice with peanuts, curry leaves & lemon.", img: "https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400&h=300&fit=crop" },
+            // Lunch
+            { id: 4, name: "Veg Thali", price: 120, category: "Lunch", desc: "Roti, rice, dal, seasonal veg, salad & papad.", img: "img.jpg" },
+            { id: 5, name: "Chicken Biryani", price: 180, category: "Lunch", desc: "Fragrant basmati rice with tender chicken & raita.", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop" },
+            { id: 6, name: "Rajma Chawal", price: 90, category: "Lunch", desc: "Kidney bean curry with steamed rice & onion.", img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop" },
+            // Snacks
+            { id: 7, name: "Samosa (2 pcs)", price: 30, category: "Snacks", desc: "Crispy fried pastry with spiced potato filling.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop" },
+            { id: 8, name: "Pav Bhaji", price: 70, category: "Snacks", desc: "Buttery mashed veggies with soft pav buns.", img: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&h=300&fit=crop" },
+            { id: 9, name: "Vada Pav", price: 40, category: "Snacks", desc: "Mumbai-style potato vada in bun with chutney.", img: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&h=300&fit=crop" },
+            { id: 10, name: "Masala Corn", price: 55, category: "Snacks", desc: "Sweet corn tossed with butter, chilli, and masala.", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400&h=300&fit=crop" },
+            { id: 11, name: "Cheese Toast", price: 65, category: "Snacks", desc: "Toasted bread loaded with cheese and herbs.", img: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop" },
+            { id: 12, name: "Onion Rings", price: 75, category: "Snacks", desc: "Crispy golden onion rings with spicy dip.", img: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=300&fit=crop" },
+            // Beverages
+            { id: 13, name: "Masala Chai", price: 20, category: "Beverages", desc: "Hot spiced Indian tea with milk.", img: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&h=300&fit=crop" },
+            { id: 14, name: "Cold Coffee", price: 60, category: "Beverages", desc: "Chilled coffee blended with ice cream.", img: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop" },
+            { id: 15, name: "Fresh Lime Soda", price: 35, category: "Beverages", desc: "Refreshing lime with soda, sweet or salted.", img: "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?w=400&h=300&fit=crop" },
+            { id: 16, name: "Mango Juice", price: 45, category: "Beverages", desc: "Fresh mango juice with a sweet tropical taste.", img: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=300&fit=crop" },
+            { id: 17, name: "Orange Juice", price: 50, category: "Beverages", desc: "Vitamin-rich orange juice served chilled.", img: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop" },
+            { id: 18, name: "Fruit Punch", price: 60, category: "Beverages", desc: "A colorful blend of mixed fruits and soda.", img: "https://images.unsplash.com/photo-1546173159-315724a31696?w=400&h=300&fit=crop" },
+            { id: 19, name: "Vanilla Ice Cream", price: 50, category: "Beverages", desc: "Classic creamy vanilla scoops in a chilled cup.", img: "ice.webp" },
+            { id: 20, name: "Butterscotch Sundae", price: 80, category: "Beverages", desc: "Ice cream topped with rich butterscotch sauce.", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop" },
+            { id: 21, name: "Strawberry Scoop", price: 55, category: "Beverages", desc: "Refreshing strawberry scoop with a smooth finish.", img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=300&fit=crop" },
+            // Fast Food
+            { id: 22, name: "Veg Burger", price: 80, category: "Fast Food", desc: "Crispy veg patty, lettuce, mayo & cheese.", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop" },
+            { id: 23, name: "French Fries", price: 60, category: "Fast Food", desc: "Golden crispy fries with peri-peri seasoning.", img: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400&h=300&fit=crop" },
+            { id: 24, name: "Cheese Pizza", price: 150, category: "Fast Food", desc: "Personal margherita with extra cheese.", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop" },
+            { id: 25, name: "Paneer Wrap", price: 90, category: "Fast Food", desc: "Soft wrap with grilled paneer and veggies.", img: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400&h=300&fit=crop" },
+            { id: 26, name: "Chicken 65", price: 140, category: "Lunch", desc: "Spicy boneless chicken bites with curry leaves and chili.", img: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop" },
+            { id: 27, name: "Chicken Fried Rice", price: 150, category: "Lunch", desc: "Wok-tossed rice with chicken, veg and classic spices.", img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop" },
+            { id: 28, name: "Butter Chicken Rice", price: 180, category: "Lunch", desc: "Creamy butter chicken served with flavorful rice.", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop" },
+            { id: 29, name: "Chicken Burger", price: 110, category: "Fast Food", desc: "Juicy grilled chicken patty with lettuce and sauce.", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&h=300&fit=crop" },
+            { id: 30, name: "Chicken Shawarma", price: 95, category: "Fast Food", desc: "Loaded chicken wrap with garlic sauce, onion and salad.", img: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400&h=300&fit=crop" },
+            { id: 31, name: "Dark Chocolate Bar", price: 70, category: "Chocolates", desc: "Rich dark chocolate bar for a smooth cocoa bite.", img: "https://images.unsplash.com/photo-1511381939415-e44015466834?w=400&h=300&fit=crop" },
+            { id: 32, name: "Milk Chocolate Pack", price: 80, category: "Chocolates", desc: "Soft creamy milk chocolate bites for a sweet treat.", img: "milk.webp" },
+            { id: 33, name: "KitKat Crunch", price: 60, category: "Chocolates", desc: "Crispy wafer chocolate snack with a crunchy finish.", img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop" },
+            { id: 34, name: "Chocolate Truffle", price: 90, category: "Chocolates", desc: "Luxurious truffle with rich ganache filling.", img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop" },
+            { id: 35, name: "Ferrero-style Chocolate", price: 100, category: "Chocolates", desc: "Hazelnut chocolate delight with a creamy center.", img: "choco.jpg" },
+        ];
+
+        // ==================== CART STATE ====================
+        let cart = []; // array of { id, name, price, qty, img, category }
+
+        // ==================== DOM ELEMENTS ====================
+        const menuGrid = document.getElementById('menuGrid');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartTotalPrice = document.getElementById('cartTotalPrice');
+        const navCartCount = document.getElementById('navCartCount');
+        const navOrdersCount = document.getElementById('navOrdersCount');
+        const categoryFilters = document.getElementById('categoryFilters');
+        const menuSearchInput = document.getElementById('menuSearchInput');
+        const menuSearchBtn = document.getElementById('menuSearchBtn');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const ordersContainer = document.getElementById('ordersContainer');
+        const ordersNavBtn = document.getElementById('ordersNavBtn');
+        let currentCategory = 'all';
+        let orders = JSON.parse(localStorage.getItem('digitalCanteenOrders') || '[]');
+
+        if (!Array.isArray(orders)) {
+            orders = [];
+        }
+
+        function getFilteredMenuItems(category = currentCategory) {
+            const searchTerm = menuSearchInput.value.trim().toLowerCase();
+            const sourceItems = category === 'all'
+                ? foodItems
+                : foodItems.filter(item => item.category === category);
+
+            if (!searchTerm) return sourceItems;
+
+            return sourceItems.filter(item => {
+                const itemText = `${item.name} ${item.category} ${item.desc}`.toLowerCase();
+                return itemText.includes(searchTerm);
+            });
+        }
+
+        // ==================== RENDER MENU ====================
+        function renderMenu(category = 'all') {
+            currentCategory = category;
+            const filtered = getFilteredMenuItems(currentCategory);
+
+            if (filtered.length === 0) {
+                const searchTerm = menuSearchInput.value.trim();
+                const emptyMessage = searchTerm
+                    ? `No items found for "${searchTerm}".`
+                    : 'No items in this category.';
+                menuGrid.innerHTML = `<p style="grid-column:1/-1; text-align:center;">${emptyMessage}</p>`;
+                return;
+            }
+
+            menuGrid.innerHTML = filtered.map(item => `
+                <div class="food-card" data-id="${item.id}">
+                    <img class="food-img" src="${item.img}" alt="${item.name}" loading="lazy">
+                    <div class="food-info">
+                        <div class="food-category">${item.category}</div>
+                        <div class="food-name">${item.name}</div>
+                        <div class="food-desc">${item.desc}</div>
+                        <div class="food-price">₹${item.price}</div>
+                        <button class="add-to-cart" data-id="${item.id}">
+                            <i class="fas fa-plus-circle"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Attach listeners to Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = Number(e.currentTarget.dataset.id);
+                    addToCart(id);
+                });
+            });
+        }
+
+        // ==================== ADD TO CART ====================
+        function addToCart(productId) {
+            const product = foodItems.find(p => p.id === productId);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    img: product.img,
+                    category: product.category,
+                    qty: 1
+                });
+            }
+            updateCartUI();
+        }
+
+        // ==================== UPDATE CART UI ====================
+        function updateCartUI() {
+            // Total items count
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            navCartCount.textContent = totalItems;
+
+            // Render cart items
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<div class="empty-cart">Your cart is empty.</div>`;
+            } else {
+                cartItemsContainer.innerHTML = cart.map(item => `
+                    <div class="cart-item" data-id="${item.id}">
+                        <img class="cart-item-img" src="${item.img}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">₹${item.price} each</div>
+                            <div class="cart-item-actions">
+                                <button class="qty-btn" data-action="decrease" data-id="${item.id}">−</button>
+                                <span style="font-weight:600; min-width:24px; text-align:center;">${item.qty}</span>
+                                <button class="qty-btn" data-action="increase" data-id="${item.id}">+</button>
+                                <button class="remove-btn" data-action="remove" data-id="${item.id}">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Attach cart item action listeners
+            document.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const action = e.currentTarget.dataset.action;
+                    const id = Number(e.currentTarget.dataset.id);
+                    if (action === 'increase') changeQty(id, 1);
+                    else if (action === 'decrease') changeQty(id, -1);
+                });
+            });
+
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = Number(e.currentTarget.dataset.id);
+                    removeItem(id);
+                });
+            });
+
+            // Update total price
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            cartTotalPrice.textContent = `₹${totalPrice}`;
+        }
+
+        // ==================== CHANGE QUANTITY ====================
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            const newQty = item.qty + delta;
+            if (newQty <= 0) {
+                removeItem(id);
+            } else {
+                item.qty = newQty;
+                updateCartUI();
+            }
+        }
+
+        // ==================== REMOVE ITEM ====================
+        function removeItem(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function saveOrders() {
+            localStorage.setItem('digitalCanteenOrders', JSON.stringify(orders));
+        }
+
+        function renderCustomerMessage() {
+            const box = document.getElementById('customerMessageBox');
+            const text = document.getElementById('customerMessageText');
+            const closeBtn = document.getElementById('closeCustomerMessage');
+            const saved = localStorage.getItem('canteenCustomerMessage');
+
+            if (!saved) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const message = JSON.parse(saved);
+                const expiresAt = Number(message.expiresAt || 0);
+
+                if (!expiresAt || Date.now() > expiresAt) {
+                    localStorage.removeItem('canteenCustomerMessage');
+                    box.classList.add('hidden');
+                    return;
+                }
+
+                text.textContent = message.text || 'Order successful!';
+                box.classList.remove('hidden');
+
+                const remaining = Math.max(0, expiresAt - Date.now());
+                clearTimeout(window.customerMessageTimeout);
+                window.customerMessageTimeout = setTimeout(() => {
+                    box.classList.add('hidden');
+                    localStorage.removeItem('canteenCustomerMessage');
+                }, remaining);
+            } catch {
+                box.classList.add('hidden');
+            }
+
+            closeBtn.onclick = () => {
+                box.classList.add('hidden');
+                localStorage.removeItem('canteenCustomerMessage');
+            };
+        }
+
+        function formatOrderStatus(order) {
+            if (order.paymentStatus === 'paid') return 'Paid';
+            if (order.status === 'preparing') return 'Preparing';
+            if (order.status === 'ready') return 'Ready';
+            if (order.status === 'delivery') return 'On the way';
+            return 'Placed';
+        }
+
+        function getStatusClass(order) {
+            if (order.paymentStatus === 'paid') return 'paid';
+            if (order.status === 'preparing') return 'preparing';
+            if (order.status === 'ready' || order.status === 'delivery') return 'ready';
+            return '';
+        }
+
+        function renderOrders() {
+            navOrdersCount.textContent = orders.length;
+
+            if (orders.length === 0) {
+                ordersContainer.innerHTML = `
+                    <div class="no-orders">
+                        <i class="fas fa-receipt"></i>
+                        <p>You haven't placed any orders yet.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Order something from the menu above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const recentOrders = [...orders].reverse();
+
+            ordersContainer.innerHTML = recentOrders.map(order => {
+                const statusText = formatOrderStatus(order);
+                const statusClass = getStatusClass(order);
+                const isPaid = order.paymentStatus === 'paid';
+                return `
+                    <div class="order-card" data-order-id="${order.orderId}">
+                        <div class="order-header">
+                            <div class="order-id"><i class="fas fa-receipt"></i> Order #${order.orderId}</div>
+                            <div class="order-date"><i class="far fa-calendar-alt"></i> ${order.date}</div>
+                            <div class="status-badge ${statusClass}">${statusText}</div>
+                        </div>
+
+                        <div class="order-items-list">
+                            ${order.items.map(item => `
+                                <div class="order-item-row">
+                                    <img src="${item.img}" alt="${item.name}">
+                                    <div class="order-item-name">${item.name}</div>
+                                    <div class="order-item-qty">Qty: ${item.qty}</div>
+                                    <div class="order-item-price">₹${item.price * item.qty}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="order-footer">
+                            <div class="order-total-label">Total Amount:</div>
+                            <div class="order-actions">
+                                <div class="order-total-amount">₹${order.total}</div>
+                                ${isPaid ? '<span class="paid-tag">Paid</span>' : `<button class="pay-order-btn" data-order-id="${order.orderId}" data-amount="${order.total}">Pay ₹${order.total}</button>`}
+                                <button class="delete-order-btn" data-order-id="${order.orderId}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.delete-order-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const orderId = e.currentTarget.dataset.orderId;
+                    deleteOrder(orderId);
+                });
+            });
+
+            document.querySelectorAll('.pay-order-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const orderId = e.currentTarget.dataset.orderId;
+                    const amount = Number(e.currentTarget.dataset.amount || 0);
+                    const order = orders.find(item => String(item.orderId) === String(orderId));
+                    if (!order) return;
+                    order.paymentStatus = 'paid';
+                    saveOrders();
+                    renderOrders();
+                    alert(`Payment of ₹${amount} completed successfully.`);
+                });
+            });
+        }
+
+        function deleteOrder(orderId) {
+            orders = orders.filter(order => String(order.orderId) !== String(orderId));
+            saveOrders();
+            renderOrders();
+        }
+
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsMenu = document.getElementById('settingsMenu');
+        const languageToggleBtn = document.getElementById('languageToggleBtn');
+        const languageList = document.getElementById('languageList');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const reportBtn = document.getElementById('reportBtn');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const themeBtn = document.getElementById('themeBtn');
+        const helpBtn = document.getElementById('helpBtn');
+
+        settingsBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            settingsMenu.classList.toggle('hidden');
+        });
+
+        languageToggleBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            languageList.classList.toggle('open');
+        });
+
+        document.querySelectorAll('.language-item').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const lang = event.currentTarget.dataset.lang;
+                localStorage.setItem('canteenLanguage', lang);
+                applyLanguage(lang);
+                languageList.classList.remove('open');
+            });
+        });
+
+        notificationBtn.addEventListener('click', () => {
+            alert('Notifications enabled for your canteen updates.');
+            settingsMenu.classList.add('hidden');
+        });
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            alert('Theme toggled successfully.');
+            settingsMenu.classList.add('hidden');
+        });
+
+        helpBtn.addEventListener('click', () => {
+            alert('Support: contact the canteen admin for help.');
+            settingsMenu.classList.add('hidden');
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('canteenLoggedIn');
+            localStorage.removeItem('canteenUser');
+            window.location.reload();
+        });
+
+        reportBtn.addEventListener('click', () => {
+            alert('Report submitted successfully.');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!settingsBtn.contains(event.target)) {
+                settingsMenu.classList.add('hidden');
+                languageList.classList.remove('open');
+            }
+        });
+
+        // ==================== CATEGORY FILTER ====================
+        categoryFilters.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('category-btn')) return;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            const category = e.target.dataset.category;
+            renderMenu(category);
+        });
+
+        menuSearchBtn.addEventListener('click', () => {
+            renderMenu(currentCategory);
+        });
+
+        menuSearchInput.addEventListener('input', () => {
+            renderMenu(currentCategory);
+        });
+
+        menuSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                renderMenu(currentCategory);
+            }
+        });
+
+        // ==================== CHECKOUT ====================
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Your cart is empty. Add some delicious items first!');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const orderId = Date.now().toString().slice(-6);
+            const orderDate = new Date().toLocaleString([], {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const orderItems = cart.map(item => ({ ...item }));
+            orders.push({
+                orderId,
+                date: orderDate,
+                total,
+                items: orderItems
+            });
+
+            saveOrders();
+            renderOrders();
+            localStorage.removeItem('canteenCustomerMessage');
+            cart = [];
+            updateCartUI();
+        });
+
+        // ==================== SCROLL TO MENU / CART NAV ====================
+        document.getElementById('cartNavBtn').addEventListener('click', () => {
+            document.getElementById('cart').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        ordersNavBtn.addEventListener('click', () => {
+            document.getElementById('myorders').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        const loginScreen = document.getElementById('loginScreen');
+        const appContent = document.getElementById('appContent');
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginUsername = document.getElementById('loginUsername');
+        const loginPassword = document.getElementById('loginPassword');
+
+        function isCustomerLoggedIn() {
+            return localStorage.getItem('canteenLoggedIn') === 'true';
+        }
+
+        function handleLoginSubmit() {
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value.trim();
+
+            if (!username || !password) {
+                alert('Please enter username and password.');
+                return;
+            }
+
+            if (username === 'admin' && password === '1234') {
+                localStorage.setItem('canteenLoggedIn', 'true');
+                localStorage.setItem('canteenUser', username);
+                applyLoginState();
+                alert('Login successful!');
+                return;
+            }
+
+            if (username && password) {
+                localStorage.setItem('canteenLoggedIn', 'true');
+                localStorage.setItem('canteenUser', username);
+                applyLoginState();
+                alert('Login successful!');
+            }
+        }
+
+        function applyLoginState() {
+            const isLoggedIn = isCustomerLoggedIn();
+            loginScreen.classList.toggle('hidden', isLoggedIn);
+            appContent.classList.toggle('hidden', !isLoggedIn);
+
+            if (!isLoggedIn) {
+                document.querySelectorAll('a[href^="#"]').forEach(link => {
+                    link.onclick = (event) => {
+                        event.preventDefault();
+                        alert('Please login first to access Home and Orders.');
+                    };
+                });
+                return;
+            }
+
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.onclick = null;
+            });
+        }
+
+        loginBtn.addEventListener('click', handleLoginSubmit);
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            handleLoginSubmit();
+        });
+
+        if (!isCustomerLoggedIn()) {
+            appContent.classList.add('hidden');
+        } else {
+            loginScreen.classList.add('hidden');
+        }
+
+        applyLoginState();
+
+        loginUsername.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLoginSubmit();
+            }
+        });
+
+        loginPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLoginSubmit();
+            }
+        });
+
+        // ==================== INITIAL RENDER ====================
+        renderMenu('all');
+        updateCartUI();
+        renderOrders();
+        renderCustomerMessage();
+        setInterval(renderCustomerMessage, 1000);
+
+        // Fix any broken images (fallback if unsplash fails)
+        // Not necessary, but good measure: listen for image errors (optional)
+        // We'll skip for brevity.
+    </script>
+    </div>
+</body>
+</html>
